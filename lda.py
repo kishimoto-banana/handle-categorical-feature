@@ -18,10 +18,10 @@ input_data_path = 'data/dac_sample.txt'
 test_rate = 0.2
 
 # 各カテゴリ変数ごとにLDAの特徴量を作成する特徴量数
-n_lda_features = 3
+n_lda_features = 5
 
 # トピック数
-n_topics = 3
+n_topics = 5
 
 
 def convert_lda_feature(key_vectors, X, n_lda_dims, categorical_columns):
@@ -128,6 +128,7 @@ def train_test_lda():
         df_test.drop(ground_truth_column + categorical_columns, axis=1).values)
     X_test = np.hstack((X_test_lda, X_test_integer))
     y_test = np.array(df_test[ground_truth_column].values)
+    y_test = y_test.reshape(y_test.shape[0])
     y_proba = model.predict_proba(X_test)
 
     # 評価

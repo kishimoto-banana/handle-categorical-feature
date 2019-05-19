@@ -61,6 +61,7 @@ def train_test_fh():
     # 予測
     X_test = np.array(df_test.drop(ground_truth_column, axis=1).values)
     y_test = np.array(df_test[ground_truth_column].values)
+    y_test = y_test.reshape(y_test.shape[0])
     y_proba = model.predict_proba(X_test)
 
     # 評価
