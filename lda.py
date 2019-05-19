@@ -68,7 +68,7 @@ def train_test_lda():
                                                        categorical_columns)
 
     # LDA
-    n_lda_dims = len(categorical_columns) * n_lda_features * n_topics
+    n_lda_dims = n_lda_features * n_topics
     X_train_categorical = np.array(df_train[categorical_columns].values)
     key_vectors = {}
     for seq_idx, target_column in enumerate(categorical_columns):
