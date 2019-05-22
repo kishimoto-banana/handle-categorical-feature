@@ -23,28 +23,6 @@ n_lda_features = 5
 n_topics = 5
 
 
-def convert_lda_feature(key_vectors, X, n_lda_dims, categorical_columns):
-
-    n_dims = n_lda_dims * len(categorical_columns)
-    n_samples = X.shape[0]
-
-    X_lda = np.zeros((n_samples, n_dims))
-
-    for sample_idx in range(n_samples):
-        latter_idx = 0
-        for feature_idx in range(len(categorical_columns)):
-            try:
-                vector = key_vectors[(categorical_columns[feature_idx],
-                                      X[sample_idx, feature_idx])]
-            except KeyError:
-                vector = np.ones(n_lda_dims) * -1.0
-            former_idx = latter_idx
-            latter_idx += n_lda_dims
-            X_lda[sample_idx, former_idx:latter_idx] = vector
-
-    return X_lda
-
-
 def train_test_lda():
 
     # データ読み込み
@@ -67,38 +45,21 @@ def train_test_lda():
                                                        categorical_columns)
 
     # LDA
-    n_lda_dims = n_lda_features * n_topics
-    X_train_categorical = np.array(df_train[categorical_columns].values)
-    key_vectors = {}
-    for seq_idx, target_column in enumerate(categorical_columns):
-        counter = 0
-        choiced_indicies = [
-            i for i in range(len(categorical_columns)) if i != seq_idx
+    co_features = []
+    for target_column in categorical_columns:
+        candidate_columns = [
+            column for column in categorical_columns if column != target_column
         ]
-        co_indicies = np.random.choice(choiced_indicies,
-                                       n_lda_features,
-                                       replace=False)
-        for cat_idx in co_indicies:
-            lda = LDA(n_topics=n_topics)
-            target_feature_val_vectors = lda.fit(
-                X_train_categorical[:, seq_idx],
-                X_train_categorical[:, cat_idx])
-            if counter == 0:
-                key_vectors.update({
-                    (target_column, val): vector
-                    for val, vector in target_feature_val_vectors.items()
-                })
-            else:
-                key_vectors.update({
-                    (target_column, val): np.hstack(
-                        (key_vectors[(target_column, val)], vector))
-                    for val, vector in target_feature_val_vectors.items()
-                })
+        counterpart_columns = np.random.choice(candidate_columns,
+                                               n_lda_features,
+                                               replace=False)
+        co_features.extend([(target_column, counterpart_column)
+                            for counterpart_column in counterpart_columns])
 
-            counter += 1
+    lda = LDA(co_features, n_topics, n_lda_features)
+    lda.fit(df_train)
+    X_train_lda = lda.transform(df_train, categorical_columns)
 
-    X_train_lda = convert_lda_feature(key_vectors, X_train_categorical,
-                                      n_lda_dims, categorical_columns)
     print(X_train_lda)
     print(X_train_lda.shape)
 
@@ -116,9 +77,7 @@ def train_test_lda():
                                                       categorical_columns)
 
     # LDA
-    X_test_categorical = np.array(df_test[categorical_columns].values)
-    X_test_lda = convert_lda_feature(key_vectors, X_test_categorical,
-                                     n_lda_dims, categorical_columns)
+    X_test_lda = lda.transform(df_test, categorical_columns)
     print(X_test_lda)
     print(X_test_lda.shape)
 
