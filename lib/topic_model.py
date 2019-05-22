@@ -30,10 +30,12 @@ class LDA:
             return vector
 
         key_vectors = {}
+        # 共起行列を作成する特徴量ペアごとに処理
         for co_feature in self.co_features:
             target_feature = np.array(df[co_feature[0]].values)
             counterpart_feature = np.array(df[co_feature[1]].values)
             target_co_sentences = {}
+            # 共起行列を作成
             for target_feature_val, counterpart_feature_val in zip(
                     target_feature, counterpart_feature):
                 target_co_sentences.setdefault(target_feature_val, []).append(
@@ -42,16 +44,20 @@ class LDA:
             sentences = list(target_co_sentences.values())
             dictionary = Dictionary(sentences)
             corpus = [dictionary.doc2bow(tokens) for tokens in sentences]
+
+            # LDA
             lda = LdaModel(corpus,
                            num_topics=self.n_topics,
                            id2word=dictionary,
                            random_state=self.random_state)
-            target_feature_vals = list(target_co_sentences.keys())
 
+            # ターゲットの特徴量の値ごとにトピックのベクトルを取得
             vectors = list(
                 map(get_vector, [lda for _ in range(len(corpus))],
                     [text for text in corpus]))
 
+            # (ターゲットの特徴量、ターゲットの特徴量の値)をkey、トピックのベクトルをvalueとして辞書に格納
+            target_feature_vals = list(target_co_sentences.keys())
             target_column = co_feature[0]
             for target_feature_val, vector in zip(target_feature_vals, vectors):
                 key = (target_column, target_feature_val)
