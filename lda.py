@@ -127,7 +127,6 @@ def train_test_lda():
         df_test.drop(ground_truth_column + categorical_columns, axis=1).values)
     X_test = np.hstack((X_test_lda, X_test_integer))
     y_test = np.array(df_test[ground_truth_column].values)
-    y_test = y_test.reshape(y_test.shape[0])
     y_proba = model.predict_proba(X_test)
 
     # 評価

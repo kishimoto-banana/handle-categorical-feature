@@ -44,7 +44,6 @@ def train_test_fh():
     # Hashing
     hasher = HashingEncoder(cols=categorical_columns, n_components=n_hash_dims)
     df_train = hasher.fit_transform(df_train)
-    print(df_train.head())
 
     # 学習
     X_train = np.array(df_train.drop(ground_truth_column, axis=1).values)
@@ -61,7 +60,6 @@ def train_test_fh():
     # 予測
     X_test = np.array(df_test.drop(ground_truth_column, axis=1).values)
     y_test = np.array(df_test[ground_truth_column].values)
-    y_test = y_test.reshape(y_test.shape[0])
     y_proba = model.predict_proba(X_test)
 
     # 評価
