@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from category_encoders.hashing import HashingEncoder
 from lib import data_handler
 from lib import evaluator
 from lib.topic_model import LDA
