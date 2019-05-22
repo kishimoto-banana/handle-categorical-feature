@@ -60,9 +60,6 @@ def train_test_lda():
     lda.fit(df_train)
     X_train_lda = lda.transform(df_train, categorical_columns)
 
-    print(X_train_lda)
-    print(X_train_lda.shape)
-
     # 学習
     X_train_integer = np.array(
         df_train.drop(ground_truth_column + categorical_columns, axis=1).values)
@@ -78,8 +75,6 @@ def train_test_lda():
 
     # LDA
     X_test_lda = lda.transform(df_test, categorical_columns)
-    print(X_test_lda)
-    print(X_test_lda.shape)
 
     # 予測
     X_test_integer = np.array(
