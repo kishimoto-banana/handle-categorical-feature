@@ -10,6 +10,13 @@ class LDA:
                  n_topics=5,
                  n_lda_features=5,
                  random_state=42):
+        """
+        :param co_features: 共起行列を作成する特徴量のペアのリスト
+        （e.g. [('categorical_1', 'categorical_2'), ('categorical_1', 'categorical_3'), ...]）
+        :param n_topics: トピック数
+        :param n_lda_features: 各カテゴリ変数ごとにLDAの特徴量を作成する特徴量数
+        :param random_state: 乱数のseed
+        """
         self.co_features = co_features
         self.n_topics = n_topics
         self.n_lda_features = n_lda_features
@@ -19,7 +26,10 @@ class LDA:
         self.key_vectors = {}
 
     def fit(self, df):
-
+        """
+        各特徴量のペアごとにLDAを行う
+        :param df: 入力データのdataframe
+        """
         def get_vector(lda_model, corpus):
 
             topic_vectors = lda_model.get_document_topics(
@@ -70,7 +80,12 @@ class LDA:
         self.key_vectors = key_vectors
 
     def transform(self, df, categorical_columns):
-
+        """
+        特徴量をトピックのベクトルに変換する
+        :param df: 入力データのdataframe
+        :param categorical_columns: 変換対象のカテゴリ変数のカラム名
+        :return: トピックのベクトルに変換した行列
+        """
         if len(self.key_vectors) == 0:
             raise Exception('Need to train before transform')
 
