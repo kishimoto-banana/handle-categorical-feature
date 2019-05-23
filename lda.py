@@ -17,10 +17,10 @@ input_data_path = 'data/dac_sample.txt'
 test_rate = 0.2
 
 # 各カテゴリ変数ごとにLDAの特徴量を作成する特徴量数
-n_lda_features = 5
+n_lda_features = 3
 
 # トピック数
-n_topics = 5
+n_topics = 3
 
 
 def train_test_lda():
